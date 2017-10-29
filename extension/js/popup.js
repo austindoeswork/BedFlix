@@ -12,7 +12,8 @@ function getCurrentTabUrl(callback) {
 }
 
 function checkURL(statusText) {
-  if (statusText == "https://www.netflix.com/browse") {
+  var netflixURL = statusText.substring(0, 23);
+  if (netflixURL == "https://www.netflix.com") {
     document.getElementById('status').textContent = "Yes";
   }
   else {
