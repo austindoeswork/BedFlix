@@ -11,13 +11,23 @@ function getCurrentTabUrl(callback) {
   });
 }
 
+function hideDIV(divID) {
+  var x = document.getElementById(divID);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+
 function checkURL(statusText) {
   var netflixURL = statusText.substring(0, 23);
+
   if (netflixURL == "https://www.netflix.com") {
-    document.getElementById('status').textContent = "Yes";
+    hideDIV('offNetflix');
   }
   else {
-    document.getElementById('status').textContent = "No";
+    hideDIV('onNetflix');
   }
 }
 
