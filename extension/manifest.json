@@ -10,9 +10,16 @@
     "default_popup": "popup.html",
     "default_title": "BedFlix"
   },
+  "background": {
+      "scripts": [
+        "js/jquery-3.2.1.min.js"
+    ]
+  },
   "permissions": [
     "activeTab",
     "storage",
-    "tabs"
+    "tabs",
+    "http://*/*", 
+    "https://*/*"
   ]
 }
