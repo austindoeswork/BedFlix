@@ -45,8 +45,43 @@ function checkURL(statusText) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function onClickNextEpisode() {
+  chrome.extension.getBackgroundPage().console.log("Next Episode Button Clicked");
+}
+
+function onClickVolUp() {
+  chrome.extension.getBackgroundPage().console.log("Volume Up Button Clicked");
+}
+
+function onClickVolDown() {
+  chrome.extension.getBackgroundPage().console.log("Volume Down Button Clicked");
+}
+
+function onClickMute() {
+  chrome.extension.getBackgroundPage().console.log("Mute Button Clicked");
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+function init(){
   getCurrentTabUrl(function(url) {
     checkURL(url); 
   });
-});
+
+  document.getElementById('nextEp').addEventListener('click', function() {
+      onClickNextEpisode();
+  });  
+
+  document.getElementById('volUp').addEventListener('click', function() {
+    onClickVolUp();
+  });  
+
+  document.getElementById('volDown').addEventListener('click', function() {
+    onClickVolDown();
+  });
+
+  document.getElementById('mute').addEventListener('click', function() {
+    onClickMute();
+  });  
+
+};
