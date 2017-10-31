@@ -4,31 +4,44 @@
   <head>
     <title>BedFlix</title>
 
+    <!-- Javascript Imports -->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+  crossorigin="anonymous"></script>
     <script src="js/bedflix.js"></script>
+
+    <!-- Styles Imports -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
+  crossorigin="anonymous">
     <link rel="stylesheet" href="css/main.css">
+    
   </head>
 
   <body>
     <h1>BedFlix</h1>
 
     <div id="onNetflix"> 
-      <div id="watch">
+      <div id="video-control">
+        <button type="button" 
+                id="play">Play</button>
+        <button type="button" 
+                id="pause">Pause</button>
         <button type="button" 
                 id="nextEp">Next Episode</button>
-        <button type="button"
-                id="volUp">Volume Up</button>
-        <button type="button"
-                id="volDown">Volume Down</button>
-        <button type="button"
-                id="mute">Mute</button>
       </div>
+      <div id="audio-control">
+        <button type="button" id="volUp">Volume Up</button>
+        <button type="button" id="volDown">Volume Down</button>
+        <button type="button" id="mute">Mute</button>
+      </div>
+      <div id="info"></div>      
       <div id="else">
         Start watching a show
       </div>
     </div>
 
     <div id="offNetflix">To begin using our app, please go to Netflix.</div>
-
-    </div>
   </body>
+
+  <div id="info"></div>
 </html>

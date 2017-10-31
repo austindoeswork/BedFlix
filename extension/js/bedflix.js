@@ -1,11 +1,13 @@
-function getCurrentTabUrl(callback) {  
+var play = true;
+
+function getCurrentTabUrl(callback) {
   var queryInfo = {
-    active: true, 
+    active: true,
     currentWindow: true
   };
 
-  chrome.tabs.query(queryInfo, function(tabs) {
-    var tab = tabs[0]; 
+  chrome.tabs.query(queryInfo, function (tabs) {
+    var tab = tabs[0];
     var url = tab.url;
     callback(url);
   });
@@ -45,43 +47,123 @@ function checkURL(statusText) {
   }
 }
 
-function onClickNextEpisode() {
-  chrome.extension.getBackgroundPage().console.log("Next Episode Button Clicked");
-}
-
-function onClickVolUp() {
-  chrome.extension.getBackgroundPage().console.log("Volume Up Button Clicked");
-}
-
-function onClickVolDown() {
-  chrome.extension.getBackgroundPage().console.log("Volume Down Button Clicked");
-}
-
-function onClickMute() {
-  chrome.extension.getBackgroundPage().console.log("Mute Button Clicked");
-}
-
 document.addEventListener('DOMContentLoaded', init);
 
-function init(){
-  getCurrentTabUrl(function(url) {
-    checkURL(url); 
+function init() {
+
+  getCurrentTabUrl(function (url) {
+    checkURL(url);
   });
 
-  document.getElementById('nextEp').addEventListener('click', function() {
-      onClickNextEpisode();
-  });  
+  function findEpisode() {
+    var nextEp = document.getElementsByClassName("nextEpisode");
+    var title = document.getElementsByClassName("video-title")[0].innerHTML;
+    titleSplice=title.split(/<h4>|<\/h4>/)
+    return [nextEp,titleSplice[1]];
+  }
 
-  document.getElementById('volUp').addEventListener('click', function() {
-    onClickVolUp();
-  });  
-
-  document.getElementById('volDown').addEventListener('click', function() {
-    onClickVolDown();
+  chrome.tabs.executeScript({
+    code: '(' + findEpisode + ')();'
+  }, (results) => {
+    console.log(results[0][1]);
+    if (results[0][0] != '0') {
+      document.getElementById('info').innerHTML = "<p>Currently watching a SHOW</p>"
+      
+      $("#info").append("<p>Title: " + results[0][1] + "</p>");
+    }
+    else {
+      document.getElementById('info').innerHTML = "Currently watching a MOVIE"
+    }
   });
-
-  document.getElementById('mute').addEventListener('click', function() {
-    onClickMute();
-  });  
 
 };
+
+document.addEventListener('DOMContentLoaded', checkTags, false);
+
+// Video control. Play button causes a currently paused video to play.
+// Pause button causes a playing video to pause.
+function checkTags() {
+  document.getElementById("play").addEventListener('click', () => {
+    function playVideo() {
+      console.log("play");
+      var vid = document.querySelectorAll('video')[0];
+      vid.play();
+    }
+
+    chrome.tabs.executeScript({
+      code: '(' + playVideo + ')();' 
+    }, (results) => {
+    });
+  });
+
+  document.getElementById("pause").addEventListener('click', () => {
+    function pauseVideo() {
+      console.log("pause");
+      var vid = document.querySelectorAll('video')[0];
+      vid.pause();
+    }
+
+    chrome.tabs.executeScript({
+      code: '(' + pauseVideo + ')();'
+    }, (results) => {
+    });
+  });
+
+  // Audio control. Mute button mutes or unmutes the sound.
+  // The volume up increases the volume by 10% currently, but
+  // can be changed to a different amount. Similarly, the 
+  // volume down currently decreases volume by 10%.
+  document.getElementById("mute").addEventListener('click', () => {
+    function muteVideo() {
+      console.log("mute");
+      var vid = document.querySelectorAll('video')[0];
+      if (vid.muted == false) {
+        vid.muted = true;
+      }
+      else {
+        vid.muted = false;
+      }
+    }
+
+    chrome.tabs.executeScript({
+      code: '(' + muteVideo + ')();'
+    }, (results) => {
+    });
+  });
+
+  document.getElementById("volUp").addEventListener('click', () => {
+    function volUpVideo() {
+      console.log("volume up 10%");
+      var vid = document.querySelectorAll('video')[0];
+      if (vid.volume <= 0.9) {
+        vid.volume = vid.volume + 0.1;
+      }
+      else {
+        vid.volume = 1.0;
+      }
+    }
+
+    chrome.tabs.executeScript({
+      code: '(' + volUpVideo + ')();'
+    }, (results) => {
+    });
+  });
+
+  document.getElementById("volDown").addEventListener('click', () => {
+    function volDownVideo() {
+      console.log("volume down 10%");
+      var vid = document.querySelectorAll('video')[0];
+      if (vid.volume >= 0.1) {
+        vid.volume = vid.volume - 0.1;
+      }
+      else {
+        vid.volume = 0.0;
+      }
+    }
+
+    chrome.tabs.executeScript({
+      code: '(' + volDownVideo + ')();'
+    }, (results) => {
+    });
+  });
+}
