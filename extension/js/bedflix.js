@@ -1,5 +1,3 @@
-var play = true;
-
 function getCurrentTabUrl(callback) {
   var queryInfo = {
     active: true,
@@ -56,33 +54,44 @@ function init() {
   });
 
   function findEpisode() {
-    var nextEp = document.getElementsByClassName("nextEpisode");
     var title = document.getElementsByClassName("video-title")[0].innerHTML;
-    titleSplice=title.split(/<h4>|<\/h4>/)
-    return [nextEp,titleSplice[1]];
+    if (title.indexOf("span") !== -1) {
+      var nextEp = "show";
+      var titleSplice = title.split(/<h4>|<\/h4>/)
+      var showInfo = titleSplice[2].split(/<span>|<\/span>/)
+      var epTitle = showInfo[3];
+      var epInfo = showInfo[1];
+    }
+    else {
+      var nextEp = "movie";
+      var titleSplice = title.split(/">|<\/h4>/);
+      var epTitle = "";
+      var epInfo = "";
+    }
+    
+    return [nextEp,titleSplice[1],epTitle,epInfo];
   }
 
   chrome.tabs.executeScript({
     code: '(' + findEpisode + ')();'
   }, (results) => {
-    console.log(results[0][1]);
-    if (results[0][0] != '0') {
-      document.getElementById('info').innerHTML = "<p>Currently watching a SHOW</p>"
-      
-      $("#info").append("<p>Title: " + results[0][1] + "</p>");
-    }
-    else {
-      document.getElementById('info').innerHTML = "Currently watching a MOVIE"
-    }
+    console.log(results);
+      document.getElementById('info').innerHTML = "<p>Currently watching a " + results[0][0] + "</p>"
+      $(info).append("<p>title: " + results[0][1] + "</p>")
+      if (results[0][0]==="show"){
+        $(info).append("<p>episode title: " + results[0][2] + "</p>");
+        $(info).append("<p>episode info: " + results[0][3] + "</p>");
+      }
   });
 
 };
 
-document.addEventListener('DOMContentLoaded', checkTags, false);
+document.addEventListener('DOMContentLoaded', buttonControl, false);
 
 // Video control. Play button causes a currently paused video to play.
 // Pause button causes a playing video to pause.
-function checkTags() {
+function buttonControl() {
+
   document.getElementById("play").addEventListener('click', () => {
     function playVideo() {
       console.log("play");
@@ -105,6 +114,19 @@ function checkTags() {
 
     chrome.tabs.executeScript({
       code: '(' + pauseVideo + ')();'
+    }, (results) => {
+    });
+  });
+
+  document.getElementById("nextEp").addEventListener('click', () => {
+    function skipEp() {
+      console.log("nextEp");
+      var nextEpButton = document.getElementsByClassName('button-nfplayerNextEpisode')[0];
+      nextEpButton.click();
+    }
+
+    chrome.tabs.executeScript({
+      code: '(' + skipEp + ')();'
     }, (results) => {
     });
   });
@@ -163,6 +185,18 @@ function checkTags() {
 
     chrome.tabs.executeScript({
       code: '(' + volDownVideo + ')();'
+    }, (results) => {
+    });
+  });
+
+  // Debug Info console
+  document.getElementById("debug").addEventListener('click', () => {
+    function viewDOM() {
+      console.log(document.body);
+    }
+
+    chrome.tabs.executeScript({
+      code: '(' + viewDOM + ')();' 
     }, (results) => {
     });
   });
