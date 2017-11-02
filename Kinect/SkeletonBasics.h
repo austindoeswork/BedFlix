@@ -8,19 +8,38 @@
 
 #include "resource.h"
 #include "NuiApi.h"
+#include "NuiSensor.h"
+
+class GestureMachine
+{
+	int currentState = -1;
+	int potentialState = -1;
+	int frameThreshold = 10;
+	int frameCount = 0;
+
+public:
+	// Constructor
+	GestureMachine() {};
+
+	// Update Gesture
+	void Update(NUI_SKELETON_FRAME skel, int whichSkel);
+	int  GetGesture(NUI_SKELETON_DATA curSkel);
+
+	void ExportState();
+};
 
 class CSkeletonBasics
 {
     static const int        cScreenWidth  = 320;
     static const int        cScreenHeight = 240;
-
     static const int        cStatusMessageMaxLen = MAX_PATH*2;
 
+	GestureMachine			gm;
 public:
     /// <summary>
     /// Constructor
     /// </summary>
-    CSkeletonBasics();
+    CSkeletonBasics(GestureMachine gestureMachine);
 
     /// <summary>
     /// Destructor

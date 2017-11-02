@@ -25,14 +25,70 @@ static const float g_InferredBoneThickness = 1.0f;
 /// <returns>status</returns>
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-    CSkeletonBasics application;
+
+	// Create console window
+	AllocConsole();
+	freopen("CONIN$", "r", stdin);
+	freopen("CONOUT$", "w", stdout);
+	freopen("CONOUT$", "w", stderr);
+
+	GestureMachine gm;
+	gm.ExportState();
+
+    CSkeletonBasics application(gm);
     application.Run(hInstance, nCmdShow);
+}
+
+void GestureMachine::ExportState(){
+	printf("%d\n", currentState);
+}
+
+int GestureMachine::GetGesture(NUI_SKELETON_DATA curSkel) {
+	int gesture = -1;
+
+	auto lh = curSkel.SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT];
+	auto rh = curSkel.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT];
+	auto h = curSkel.SkeletonPositions[NUI_SKELETON_POSITION_HEAD];
+
+	if (h.y < lh.y) {
+		//printf("%s\n", "left hand raised");
+		return 1;
+	}
+	else if (h.y < rh.y) {
+		//printf("%s\n", "right hand raised");
+		return 2;
+	}
+	else if (h.y < lh.y && h.y < rh.y) {
+		//printf("%s\n", "both hands raised");
+		return 3;
+	}
+	else if (h.x < lh.x && h.x > rh.x) {
+		//printf("%s\n", "crossed arms");
+		return 4;
+	}
+	return -1;
+}
+
+void GestureMachine::Update(NUI_SKELETON_FRAME skel, int whichSkel) {
+	int gesture = GetGesture(skel.SkeletonData[whichSkel]);
+	if (gesture == currentState) { return; }
+	if (gesture != potentialState) {
+		potentialState = gesture;
+		frameCount = 0;
+	}
+	else {
+		frameCount++;
+		if (frameCount == frameThreshold) {
+			currentState = potentialState;
+			ExportState();
+		}
+	}
 }
 
 /// <summary>
 /// Constructor
 /// </summary>
-CSkeletonBasics::CSkeletonBasics() :
+CSkeletonBasics::CSkeletonBasics(GestureMachine gestureMachine) :
     m_pD2DFactory(NULL),
     m_hNextSkeletonEvent(INVALID_HANDLE_VALUE),
     m_pSkeletonStreamHandle(INVALID_HANDLE_VALUE),
@@ -45,6 +101,7 @@ CSkeletonBasics::CSkeletonBasics() :
     m_pNuiSensor(NULL)
 {
     ZeroMemory(m_Points,sizeof(m_Points));
+	gm = gestureMachine;
 }
 
 /// <summary>
@@ -109,11 +166,6 @@ int CSkeletonBasics::Run(HINSTANCE hInstance, int nCmdShow)
 
     const int eventCount = 1;
     HANDLE hEvents[eventCount];
-
-	AllocConsole();
-	freopen("CONIN$", "r", stdin);
-	freopen("CONOUT$", "w", stdout);
-	freopen("CONOUT$", "w", stderr);
 
     // Main message loop
     while (WM_QUIT != msg.message)
@@ -326,6 +378,8 @@ void CSkeletonBasics::ProcessSkeleton()
     // smooth out the skeleton data
     m_pNuiSensor->NuiTransformSmooth(&skeletonFrame, NULL);
 
+
+
     // Endure Direct2D is ready to draw
     hr = EnsureDirect2DResources( );
     if ( FAILED(hr) )
@@ -347,6 +401,9 @@ void CSkeletonBasics::ProcessSkeleton()
 
         if (NUI_SKELETON_TRACKED == trackingState)
         {
+			// update the gesture machine
+			gm.Update(skeletonFrame, i);
+
             // We're tracking the skeleton, draw it
             DrawSkeleton(skeletonFrame.SkeletonData[i], width, height);
         }
@@ -402,11 +459,7 @@ void CSkeletonBasics::DrawSkeleton(const NUI_SKELETON_DATA & skel, int windowWid
     DrawBone(skel, NUI_SKELETON_POSITION_SHOULDER_LEFT, NUI_SKELETON_POSITION_ELBOW_LEFT);
     DrawBone(skel, NUI_SKELETON_POSITION_ELBOW_LEFT, NUI_SKELETON_POSITION_WRIST_LEFT);
     DrawBone(skel, NUI_SKELETON_POSITION_WRIST_LEFT, NUI_SKELETON_POSITION_HAND_LEFT);
-	auto lh = skel.SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT];
-	auto ls = skel.SkeletonPositions[NUI_SKELETON_POSITION_SHOULDER_LEFT];
-	if (ls.y < lh.y) {
-		printf("%s\n", "hand raised");
-	}
+	
     // Right Arm
     DrawBone(skel, NUI_SKELETON_POSITION_SHOULDER_RIGHT, NUI_SKELETON_POSITION_ELBOW_RIGHT);
     DrawBone(skel, NUI_SKELETON_POSITION_ELBOW_RIGHT, NUI_SKELETON_POSITION_WRIST_RIGHT);
