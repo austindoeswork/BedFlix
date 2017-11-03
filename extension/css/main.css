@@ -12,3 +12,19 @@ h1 {
     display: flex;
     justify-content: space-between;
 }
+
+#video-control {
+    margin: 5px;
+}
+
+#audio-control {
+    margin: 5px;
+}
+
+#debug-control {
+    margin: 5px;
+}
+
+#nextEpButton {
+    display: inline-block;
+}
