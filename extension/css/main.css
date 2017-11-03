@@ -24,3 +24,7 @@ h1 {
 #debug-control {
     margin: 5px;
 }
+
+#nextEpButton {
+    display: inline-block;
+}

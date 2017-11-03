@@ -36,7 +36,9 @@ function checkURL(statusText) {
       hideDIV('else');
     }
     else {
-      hideDIV('watch');
+      hideDIV('video-control');
+      hideDIV('audio-control');
+      hideDIV('debug-control');
     }
     hideDIV('offNetflix');
   }
@@ -75,12 +77,15 @@ function init() {
   chrome.tabs.executeScript({
     code: '(' + findEpisode + ')();'
   }, (results) => {
+  if (results[0][0] == 'movie') {
+    hideDIV('nextEpButton');
+  }
     console.log(results);
       document.getElementById('info').innerHTML = "<p>Currently watching a " + results[0][0] + "</p>"
-      $(info).append("<p>title: " + results[0][1] + "</p>")
+      $(info).append("<p>Title: " + results[0][1] + "</p>")
       if (results[0][0]==="show"){
-        $(info).append("<p>episode title: " + results[0][2] + "</p>");
-        $(info).append("<p>episode info: " + results[0][3] + "</p>");
+        $(info).append("<p>Episode title: " + results[0][2] + "</p>");
+        $(info).append("<p>Episode info: " + results[0][3] + "</p>");
       }
   });
 
