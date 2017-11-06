@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <stdio.h>
 #include "resource.h"
 #include "NuiApi.h"
 #include "NuiSensor.h"
@@ -17,9 +18,12 @@ class GestureMachine
 	int frameThreshold = 10;
 	int frameCount = 0;
 
+	FILE * outFile = NULL;
+
 public:
 	// Constructor
 	GestureMachine() {};
+	GestureMachine(FILE * of) { outFile = of; };
 
 	// Update Gesture
 	void Update(NUI_SKELETON_FRAME skel, int whichSkel);

@@ -15,14 +15,10 @@ static const float g_JointThickness = 3.0f;
 static const float g_TrackedBoneThickness = 6.0f;
 static const float g_InferredBoneThickness = 1.0f;
 
-/// <summary>
-/// Entry point for the application
-/// </summary>
-/// <param name="hInstance">handle to the application instance</param>
-/// <param name="hPrevInstance">always 0</param>
-/// <param name="lpCmdLine">command line arguments</param>
-/// <param name="nCmdShow">whether to display minimized, maximized, or normally</param>
-/// <returns>status</returns>
+//////////////////////////////////////////////////////////////////
+/// MAIN
+//////////////////////////////////////////////////////////////////
+
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 
@@ -32,17 +28,35 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	freopen("CONOUT$", "w", stdout);
 	freopen("CONOUT$", "w", stderr);
 
-	GestureMachine gm;
+	// Create outFile to speak to external application
+	FILE * outFile;
+	outFile = fopen("test.txt", "w");
+	if (outFile == NULL){
+		printf("INVALID OUTPUT FILE\n");
+	}
+
+	// Create Gesture Machine
+	GestureMachine gm(outFile);
 	gm.ExportState();
 
+	// Create and Run application
     CSkeletonBasics application(gm);
     application.Run(hInstance, nCmdShow);
 }
 
+//////////////////////////////////////////////////////////////////
+/// GESTURE MACHINE
+//////////////////////////////////////////////////////////////////
+
+// ExportState publishes the state to the outFile
 void GestureMachine::ExportState(){
 	printf("%d\n", currentState);
+
+	// TODO
+	//fprintf(outFile, "THIS IS THE STATE: %d\n", currentState);
 }
 
+// GetGesture parses a skeleton into a gesture
 int GestureMachine::GetGesture(NUI_SKELETON_DATA curSkel) {
 	int gesture = -1;
 
@@ -50,17 +64,17 @@ int GestureMachine::GetGesture(NUI_SKELETON_DATA curSkel) {
 	auto rh = curSkel.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT];
 	auto h = curSkel.SkeletonPositions[NUI_SKELETON_POSITION_HEAD];
 
-	if (h.y < lh.y) {
+	if (h.y < lh.y && h.y < rh.y) {
 		//printf("%s\n", "left hand raised");
-		return 1;
+		return 3;
 	}
 	else if (h.y < rh.y) {
 		//printf("%s\n", "right hand raised");
 		return 2;
 	}
-	else if (h.y < lh.y && h.y < rh.y) {
+	else if (h.y < lh.y) {
 		//printf("%s\n", "both hands raised");
-		return 3;
+		return 1;
 	}
 	else if (h.x < lh.x && h.x > rh.x) {
 		//printf("%s\n", "crossed arms");
@@ -69,6 +83,7 @@ int GestureMachine::GetGesture(NUI_SKELETON_DATA curSkel) {
 	return -1;
 }
 
+// Update will update the GM state if the gesture reaches a threshold
 void GestureMachine::Update(NUI_SKELETON_FRAME skel, int whichSkel) {
 	int gesture = GetGesture(skel.SkeletonData[whichSkel]);
 	if (gesture == currentState) { return; }
@@ -84,6 +99,10 @@ void GestureMachine::Update(NUI_SKELETON_FRAME skel, int whichSkel) {
 		}
 	}
 }
+
+//////////////////////////////////////////////////////////////////
+/// CSKELETON
+//////////////////////////////////////////////////////////////////
 
 /// <summary>
 /// Constructor
