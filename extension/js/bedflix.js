@@ -88,8 +88,8 @@ function init() {
   document.getElementById("info").innerHTML = "<p>Currently watching a " + results[0][0] + "</p>"
   $(info).append("<p>Title: " + results[0][1] + "</p>")
   if (results[0][0] === "show"){
-    $(info).append("<p>Episode title: " + results[0][2] + "</p>");
-    $(info).append("<p>Episode info: " + results[0][3] + "</p>");
+    $(info).append("<p>Episode Title: " + results[0][2] + "</p>");
+    $(info).append("<p>Episode Info: " + results[0][3] + "</p>");
   }
   });
 
