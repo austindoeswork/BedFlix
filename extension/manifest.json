@@ -12,7 +12,8 @@
   },
   "background": {
       "scripts": [
-        "js/jquery-3.2.1.min.js"
+        "js/jquery-3.2.1.min.js",
+        "js/background.js"
     ]
   },
   "permissions": [
@@ -20,7 +21,7 @@
     "storage",
     "tabs",
     "http://*/*", 
-    "https://*/*",
-    "alarms"
+    "https://*/*"
+    // "fileSystem"
   ]
 }

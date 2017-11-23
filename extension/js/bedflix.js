@@ -31,23 +31,23 @@ function checkURL(statusText) {
   // currently watching a show, display an error
   // in div "else". If watching a show, display
   // controls in the div "watch".
-  if (netflixURL == "https://www.netflix.com") {
-    if (activity == "watch") {
-      hideDIV('else');
+  if (netflixURL === "https://www.netflix.com") {
+    if (activity === "watch") {
+      hideDIV("else");
     }
     else {
-      hideDIV('video-control');
-      hideDIV('audio-control');
-      hideDIV('debug-control');
+      hideDIV("video-control");
+      hideDIV("audio-control");
+      hideDIV("debug-control");
     }
-    hideDIV('offNetflix');
+    hideDIV("offNetflix");
   }
   else {
-    hideDIV('onNetflix');
+    hideDIV("onNetflix");
   }
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener("DOMContentLoaded", init);
 
 function init() {
 
@@ -57,12 +57,16 @@ function init() {
 
   function findEpisode() {
     var title = document.getElementsByClassName("video-title")[0].innerHTML;
+    var hasNextEp = 0;
     if (title.indexOf("span") !== -1) {
       var nextEp = "show";
       var titleSplice = title.split(/<h4>|<\/h4>/)
       var showInfo = titleSplice[2].split(/<span>|<\/span>/)
       var epTitle = showInfo[3];
       var epInfo = showInfo[1];
+      if (document.getElementsByClassName('button-nfplayerNextEpisode').length === 0) {
+        hasNextEp = 1;
+      }
     }
     else {
       var nextEp = "movie";
@@ -71,22 +75,22 @@ function init() {
       var epInfo = "";
     }
     
-    return [nextEp,titleSplice[1],epTitle,epInfo];
+    return [nextEp,titleSplice[1],epTitle,epInfo,hasNextEp];
   }
 
   chrome.tabs.executeScript({
     code: '(' + findEpisode + ')();'
   }, (results) => {
-  if (results[0][0] == 'movie') {
-    hideDIV('nextEpButton');
+  if (results[0][0] === "movie" || results[0][4]) {
+    hideDIV("nextEpButton");    
   }
-    console.log(results);
-      document.getElementById('info').innerHTML = "<p>Currently watching a " + results[0][0] + "</p>"
-      $(info).append("<p>Title: " + results[0][1] + "</p>")
-      if (results[0][0]==="show"){
-        $(info).append("<p>Episode title: " + results[0][2] + "</p>");
-        $(info).append("<p>Episode info: " + results[0][3] + "</p>");
-      }
+  console.log(results);
+  document.getElementById("info").innerHTML = "<p>Currently watching a " + results[0][0] + "</p>"
+  $(info).append("<p>Title: " + results[0][1] + "</p>")
+  if (results[0][0] === "show"){
+    $(info).append("<p>Episode Title: " + results[0][2] + "</p>");
+    $(info).append("<p>Episode Info: " + results[0][3] + "</p>");
+  }
   });
 
 };
@@ -100,26 +104,17 @@ function buttonControl() {
   document.getElementById("play").addEventListener('click', () => {
     function playVideo() {
       console.log("play");
-      var vid = document.querySelectorAll('video')[0];
-      vid.play();
+      var vid = document.querySelectorAll("video")[0];
+      if (vid.paused) {
+        vid.play();
+      }
+      else {
+        vid.pause();
+      }
     }
 
     chrome.tabs.executeScript({
       code: '(' + playVideo + ')();' 
-    }, (results) => {
-    });
-  });
-
-  document.getElementById("pause").addEventListener('click', () => {
-    function pauseVideo() {
-      console.log("pause");
-      var vid = document.querySelectorAll('video')[0];
-      vid.pause();
-    }
-
-    chrome.tabs.executeScript({
-      code: '(' + pauseVideo + ')();'
-    }, (results) => {
     });
   });
 
@@ -132,7 +127,6 @@ function buttonControl() {
 
     chrome.tabs.executeScript({
       code: '(' + skipEp + ')();'
-    }, (results) => {
     });
   });
 
@@ -144,7 +138,7 @@ function buttonControl() {
     function muteVideo() {
       console.log("mute");
       var vid = document.querySelectorAll('video')[0];
-      if (vid.muted == false) {
+      if (!vid.muted) {
         vid.muted = true;
       }
       else {
@@ -154,7 +148,6 @@ function buttonControl() {
 
     chrome.tabs.executeScript({
       code: '(' + muteVideo + ')();'
-    }, (results) => {
     });
   });
 
@@ -172,7 +165,6 @@ function buttonControl() {
 
     chrome.tabs.executeScript({
       code: '(' + volUpVideo + ')();'
-    }, (results) => {
     });
   });
 
@@ -190,7 +182,6 @@ function buttonControl() {
 
     chrome.tabs.executeScript({
       code: '(' + volDownVideo + ')();'
-    }, (results) => {
     });
   });
 
@@ -202,7 +193,6 @@ function buttonControl() {
 
     chrome.tabs.executeScript({
       code: '(' + viewDOM + ')();' 
-    }, (results) => {
     });
   });
 }
