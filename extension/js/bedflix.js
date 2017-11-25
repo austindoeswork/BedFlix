@@ -91,8 +91,7 @@ function init() {
     $(info).append("<p>Episode Title: " + results[0][2] + "</p>");
     $(info).append("<p>Episode Info: " + results[0][3] + "</p>");
   }
-  });
-
+  });  
 };
 
 document.addEventListener('DOMContentLoaded', buttonControl, false);

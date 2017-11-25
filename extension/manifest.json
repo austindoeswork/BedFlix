@@ -16,12 +16,15 @@
         "js/background.js"
     ]
   },
+  "web_accessible_resources": [
+    "test.txt"
+  ],
   "permissions": [
     "activeTab",
     "storage",
     "tabs",
     "http://*/*", 
-    "https://*/*"
-    // "fileSystem"
+    "https://*/*",
+    "webNavigation"
   ]
 }
