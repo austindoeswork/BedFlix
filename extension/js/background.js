@@ -91,7 +91,7 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
                 }
             }
         });
-    }, 5000);
+    }, 100);
 }, {
         url: [{
             hostContains: '.netflix.'
