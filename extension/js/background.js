@@ -6,7 +6,7 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
     window.setInterval(function () {
         $.ajax({
             type: "GET",
-            url: './test.txt',
+            url: './cmd.txt',
             success: function (data, status, request) {
                 ls.setItem('etag', JSON.stringify(request.getResponseHeader('ETag')));
             }
