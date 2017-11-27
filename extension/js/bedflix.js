@@ -1,3 +1,6 @@
+// This file allows for a user to access all the same functions as
+// Bedflix, by physically pressing the buttons on the extension tab.
+
 function getCurrentTabUrl(callback) {
   var queryInfo = {
     active: true,
@@ -47,14 +50,18 @@ function checkURL(statusText) {
   }
 }
 
+// Once the content of the page has been loaded, run the initialize function.
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
 
+  // Ensure the code is only run when on netflix.
   getCurrentTabUrl(function (url) {
     checkURL(url);
   });
 
+  // Get the information about the episode, including if there is a next episode.
+  // If not a show, get the movie information.
   function findEpisode() {
     var title = document.getElementsByClassName("video-title")[0].innerHTML;
     var hasNextEp = 0;
@@ -78,21 +85,22 @@ function init() {
     return [nextEp,titleSplice[1],epTitle,epInfo,hasNextEp];
   }
 
+  // Inject this code into the DOM of Netflix, instead of running in the
+  // chrome extension DOM
   chrome.tabs.executeScript({
     code: '(' + findEpisode + ')();'
   }, (results) => {
-  if (results[0][0] === "movie" || results[0][4]) {
-    hideDIV("nextEpButton");    
-  }
-  console.log(results);
-  document.getElementById("info").innerHTML = "<p>Currently watching a " + results[0][0] + "</p>"
-  $(info).append("<p>Title: " + results[0][1] + "</p>")
-  if (results[0][0] === "show"){
-    $(info).append("<p>Episode Title: " + results[0][2] + "</p>");
-    $(info).append("<p>Episode Info: " + results[0][3] + "</p>");
-  }
-  });
-
+    if (results[0][0] === "movie" || results[0][4]) {
+      hideDIV("nextEpButton");    
+    }
+    console.log(results);
+    document.getElementById("info").innerHTML = "<p>Currently watching a " + results[0][0] + "</p>"
+    $(info).append("<p>Title: " + results[0][1] + "</p>")
+    if (results[0][0] === "show"){
+      $(info).append("<p>Episode Title: " + results[0][2] + "</p>");
+      $(info).append("<p>Episode Info: " + results[0][3] + "</p>");
+    }
+  });  
 };
 
 document.addEventListener('DOMContentLoaded', buttonControl, false);
