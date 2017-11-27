@@ -30,7 +30,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 	// Create outFile to speak to external application
 	FILE * outFile;
-	outFile = fopen("test.txt", "w");
+	outFile = fopen("C:\\Users\\Ripe\\SDD\\BedFlix\\extension\\cmd.txt", "w");
 	if (outFile == NULL){
 		printf("INVALID OUTPUT FILE\n");
 	}
@@ -50,10 +50,10 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 // ExportState publishes the state to the outFile
 void GestureMachine::ExportState(){
-	printf("%d\n", currentState);
-
-	// TODO
-	//fprintf(outFile, "THIS IS THE STATE: %d\n", currentState);
+	uuid++;
+	fseek(outFile, 0, SEEK_SET);
+	fprintf(outFile, "%d %d\n", currentState, uuid);
+	fflush(outFile);
 }
 
 // GetGesture parses a skeleton into a gesture
@@ -65,19 +65,19 @@ int GestureMachine::GetGesture(NUI_SKELETON_DATA curSkel) {
 	auto h = curSkel.SkeletonPositions[NUI_SKELETON_POSITION_HEAD];
 
 	if (h.y < lh.y && h.y < rh.y) {
-		//printf("%s\n", "left hand raised");
+		printf("%s\n", "left hand raised");
 		return 3;
 	}
 	else if (h.y < rh.y) {
-		//printf("%s\n", "right hand raised");
+		printf("%s\n", "right hand raised");
 		return 2;
 	}
 	else if (h.y < lh.y) {
-		//printf("%s\n", "both hands raised");
+		printf("%s\n", "both hands raised");
 		return 1;
 	}
 	else if (h.x < lh.x && h.x > rh.x) {
-		//printf("%s\n", "crossed arms");
+		printf("%s\n", "crossed arms");
 		return 4;
 	}
 	return -1;

@@ -1,0 +1,9 @@
+{
+  "name": "com.bedflix.bedflix",
+  "description": "Bedflix chrome-extension",
+  "path": "C:\\Users\\Ripe\\SDD\\SkeletonBasics-D2D\\Debug\\SkeletonBasics-D2D.exe",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://cgcooggpjagdlpdhcemjhcigajcnjcdi/"
+  ]
+}

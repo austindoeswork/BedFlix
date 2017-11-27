@@ -11,8 +11,11 @@
 #include "NuiApi.h"
 #include "NuiSensor.h"
 
+
+// Gesture Machine is a state machine to handle gestures
 class GestureMachine
 {
+	int uuid = 0;
 	int currentState = -1;
 	int potentialState = -1;
 	int frameThreshold = 10;
