@@ -7,8 +7,7 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
     // and the last known etag. When they are equal, the file has not changed.
     // When they are different, a new command has been sent and should be executed.
     ls = window.localStorage;
-    ls.setItem('id', 'null');
-    ls.setItem('etag', '-1');
+    ls.setItem('cmd', '-1');
    
     // This function is set to run every 100ms. This means, every 100ms
     // the file that communicates between the Kinect and the Extension is
@@ -20,21 +19,16 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
         // grabbed and stored.
         $.ajax({
             type: "GET",
-            url: './cmd.txt',
-            success: function (data, status, request) {
-                // ls.setItem('etag', JSON.stringify(request.getResponseHeader('ETag')));
-            }
+            url: "./cmd.txt",
+            datatype: "text",
         }).done(function (data) {
-
             // Once the file has been grabbed, the etag is compared to the last
             // known etag, and if they are different, the file is parsed. The first
             // number is the command, so the the first item in the parsed data is
             // used.
             var parsedData = data.split(" ");
-            if (ls.getItem('etag') != parsedData[1]) {
-                // console.log("etag changed");
-                ls.setItem('etag', parsedData[1]);
-                // var parsedData = data.split(" ");
+            if (ls.getItem('cmd') != parsedData[1]) {
+                ls.setItem('cmd', parsedData[1]);
 
                 // The command map is as follows:
                 // 1: Pause/Play
@@ -47,8 +41,6 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
                 // or if it is a movie, then nothing happens.
                 // All volume increases or decreases move in
                 // multiples of 10%.
-                console.log(parsedData[0]);
-                console.log(parsedData[1]);
                 if (parsedData[0] === '1') {
                     function playVideo() {
                         var vid = document.querySelectorAll("video")[0];
@@ -66,10 +58,10 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
                 }
                 else if (parsedData[0] === '2') {
                     function volUpVideo() {
-                        console.log("volume up 10%");
+                        console.log("volume up 25%");
                         var vid = document.querySelectorAll('video')[0];
-                        if (vid.volume <= 0.9) {
-                            vid.volume = vid.volume + 0.1;
+                        if (vid.volume <= 0.75) {
+                            vid.volume = vid.volume + 0.25;
                         }
                         else {
                             vid.volume = 1.0;
@@ -82,10 +74,10 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
                 }
                 else if (parsedData[0] === '3') {
                     function volDownVideo() {
-                        console.log("volume down 10%");
+                        console.log("volume down 25%");
                         var vid = document.querySelectorAll('video')[0];
-                        if (vid.volume >= 0.1) {
-                            vid.volume = vid.volume - 0.1;
+                        if (vid.volume >= 0.25) {
+                            vid.volume = vid.volume - 0.25;
                         }
                         else {
                             vid.volume = 0.0;
