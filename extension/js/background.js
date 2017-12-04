@@ -116,7 +116,8 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
                         console.log("nextEp");
                         var nextEpButton = document.getElementsByClassName('button-nfplayerNextEpisode')[0];
                         nextEpButton.click();
-
+                    }
+                    
                     chrome.tabs.executeScript({
                         code: '(' + skipEp + ')();'
                     });
