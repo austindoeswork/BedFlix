@@ -119,6 +119,12 @@ function buttonControl() {
       else {
         vid.pause();
       }
+
+      var sound = new Howl({
+        src: ['beep.mp3']
+      });
+
+      sound.play();
     }
 
     chrome.tabs.executeScript({

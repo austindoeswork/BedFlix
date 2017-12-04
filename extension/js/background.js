@@ -50,6 +50,13 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
                         else {
                             vid.pause();
                         }
+                        document.write('<audio id="player" src="../sounds/beep.mp3">');
+                        document.getElementById('player').play();
+
+
+                        // var chime = new Audio("../sounds/beep.mp3");
+                        // chime.src = "./sounds/beep.wav";
+                        // chime.play();
                     }
 
                     chrome.tabs.executeScript({
@@ -110,7 +117,7 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
                         var nextEpButton = document.getElementsByClassName('button-nfplayerNextEpisode')[0];
                         nextEpButton.click();
                     }
-
+                    
                     chrome.tabs.executeScript({
                         code: '(' + skipEp + ')();'
                     });
