@@ -42,13 +42,20 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
                 // All volume increases or decreases move in
                 // multiples of 10%.
                 if (parsedData[0] === '1') {
+                    console.log("asdf");
                     function playVideo() {
                         var vid = document.querySelectorAll("video")[0];
-                        if (vid.paused) {
-                            vid.play();
-                        }
-                        else {
-                            vid.pause();
+                        if (vid !== undefined) {
+                           console.log("pause/play!!!!!!!");
+                            if (vid.paused) {
+                                vid.play();
+                            }
+                            else {
+                                vid.pause();
+                            }
+                        } else {
+                            console.log("fwd");
+                            document.getElementsByClassName("next")[0].click();
                         }
                     }
 
@@ -58,13 +65,20 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
                 }
                 else if (parsedData[0] === '2') {
                     function volUpVideo() {
-                        console.log("volume up 25%");
+                        console.log("qwer");
                         var vid = document.querySelectorAll('video')[0];
-                        if (vid.volume <= 0.75) {
-                            vid.volume = vid.volume + 0.25;
-                        }
-                        else {
-                            vid.volume = 1.0;
+                        if (vid !== undefined) {
+                            console.log("volume up 25%!!!");
+                            if (vid.volume <= 0.75) {
+                                vid.volume = vid.volume + 0.25;
+                            }
+                            else {
+                                vid.volume = 1.0;
+                            }
+                        } else {
+                            console.log("back");
+                            document.getElementsByClassName("prev")[0].click();
+                            console.log(document.getElementsByClassName("prev"));
                         }
                     }
 
@@ -72,7 +86,7 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
                         code: '(' + volUpVideo + ')();'
                     });
                 }
-                else if (parsedData[0] === '3') {
+                else if (parsedData[0] === '5') {
                     function volDownVideo() {
                         console.log("volume down 25%");
                         var vid = document.querySelectorAll('video')[0];
@@ -104,7 +118,7 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
                         code: '(' + muteVideo + ')();'
                     });
                 }
-                else if (parsedData[0] === '5') {
+                else if (parsedData[0] === '3') {
                     function skipEp() {
                         console.log("nextEp");
                         var nextEpButton = document.getElementsByClassName('button-nfplayerNextEpisode')[0];
@@ -118,8 +132,11 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
             }
         });
     }, 100);
-}, {
-        url: [{
-            hostContains: '.netflix.'
-        }],
-    });
+}
+);
+//, 
+// {
+//         url: [{
+//             hostContains: '.netflix.'
+//         }],
+//     });
