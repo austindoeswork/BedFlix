@@ -50,13 +50,6 @@ chrome.webNavigation.onCommitted.addListener(function (details) {
                         else {
                             vid.pause();
                         }
-                        document.write('<audio id="player" src="../sounds/beep.mp3">');
-                        document.getElementById('player').play();
-
-
-                        // var chime = new Audio("../sounds/beep.mp3");
-                        // chime.src = "./sounds/beep.wav";
-                        // chime.play();
                     }
 
                     chrome.tabs.executeScript({
